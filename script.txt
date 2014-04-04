@@ -1,0 +1,52 @@
+# Basic hh
+cd /tmp/demo/webroot
+hh_client
+
+# Running the hackificator; depth vs breadth
+cd workitems
+cat WorkItem.php
+cat FirstWorkItem.php
+cat ThirdWorkItem.php
+hackificator .
+cat WorkItem.php
+cat FirstWorkItem.php
+cat ThirdWorkItem.php
+git checkout .
+vim WorkItem.php # Change into <?hh manually
+hackificator .
+cat FirstWorkItem.php
+cat ThirdWorkItem.php
+git diff
+git commit -am 'Converted work items'
+
+# hh_server --convert
+cd ../annotations
+cat good.php
+cat bad.php
+hackificator .
+cat good.php
+cat bad.php
+git commit -am 'Converted the annotations directory'
+hh_client
+hh_client --color good.php
+hh_server --convert /tmp/demo/webroot/annotations /tmp/demo/webroot
+git diff
+hh_client --color good.php
+git commit -am 'Added soft type annotations'
+
+# hack_remove_soft_types --delete-from-log
+tail -n0 -f /var/log/hhvm/error.log
+# Open http://localhost:8080/annotations/good.php in browser
+# Open http://localhost:8080/annotations/bad.php in browser
+hack_remove_soft_types --delete-from-log /var/log/hhvm/error.log
+git diff
+cat bad.php
+git commit -am 'Removed some bad types'
+tail -n0 -f /var/log/hhvm/error.log
+# Open both endpoints in browser again
+
+# hack_remove_soft_types --harden
+hack_remove_soft_types --harden good.php
+git diff
+cat good.php
+git commit -am 'Hardened'
